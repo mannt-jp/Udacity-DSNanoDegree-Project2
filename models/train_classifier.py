@@ -21,12 +21,29 @@ words = set(nltk.corpus.words.words())
 
 
 def load_data(database_filepath):
+    """Read db file to training and testing data
+
+    Args:
+        database_filepath (str): db filepath
+
+    Returns:
+        X (Series) : training and testing data
+        y (DataFrame) : training and testing labels
+    """    
     cnx = sqlite3.connect(database_filepath)
     df = pd.read_sql_query("SELECT * FROM disaster_response", cnx)
     return df.message, df.iloc[:, 5:]
 
 
 def tokenize(text):
+    """Tokenize an input text
+
+    Args:
+        text (str): A string of text to tokenize.
+
+    Returns:
+        list: list of tokens
+    """    
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     detected_urls = re.findall(url_regex, text)
     for url in detected_urls:
@@ -38,6 +55,11 @@ def tokenize(text):
 
 
 def build_model():
+    """Build a classifier
+
+    Returns:
+        GridSearchCV: A gridsearch which contains the best model after trained.
+    """    
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -53,6 +75,13 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test):
+    """Evaluate classifier
+
+    Args:
+        model (GridSearchCV): A gridsearch which contains the best model after trained.
+        X_test (Series / Numpy Array): Test data
+        Y_test (DataFrame): Test labels
+    """    
     Y_pred = model.predict(X_test)
     for i, column in enumerate(Y_test.columns):
         print(f'--------{column}--------')

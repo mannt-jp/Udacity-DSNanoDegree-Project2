@@ -3,10 +3,27 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """Load files into DataFrame
+
+    Args:
+        messages_filepath (str): messages table filepath
+        categories_filepath (str): categories table filepath
+
+    Returns:
+        DataFrame: Concatenated dataframe of two tables
+    """    
     return pd.read_csv(messages_filepath).join(pd.read_csv(categories_filepath).set_index('id'), on='id')
 
 
 def clean_data(df):
+    """Clean loaded data
+
+    Args:
+        df (DataFrame): Loaded data
+
+    Returns:
+        DataFrame: Cleaned data
+    """    
     df.categories = df.categories.str.split(';').apply(lambda x: [category.split(
         '-')[0] for category in x if category.split('-')[-1] == '1'])
     df = df.join(df.categories.str.join('*').str.get_dummies(sep='*'))
@@ -15,6 +32,12 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """Save data to a database
+
+    Args:
+        df (DataFrame): Data to save
+        database_filename (str): db filepath
+    """    
     engine = create_engine('sqlite:///{0}'.format(database_filename), echo=True)
     sqlite_connection = engine.connect()
     sqlite_table = "disaster_response"
