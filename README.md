@@ -1,7 +1,7 @@
 # Disaster Response Pipeline Project
 
 ### Introduction
-This project is a web application that categorizes messages and news into topics and calls for relief regarding disasters.
+This project is a web application that categorizes messages and news into topics and calls for relief regarding disasters. This tool can provide signals to authorities for sending in-time proper supports.
 
 ### File description
     app
